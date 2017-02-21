@@ -1,6 +1,9 @@
 var exprhbs = require('express-handlebars'); 
-var methodOverride = require("method-override");
+// var methodOverride = require("method-override");
+// var mongoose = require('mongoose');
 
+// connect to the database
+// mongoose.connect('mongodb://localhost:27017/newsscraperdb');
 // I pass the app in as a parameter - this means i dont need to require express above
 function router(app){
 	// this tells express what template engine to use and the default template lives (main)
@@ -9,7 +12,7 @@ function router(app){
 	app.set('view engine', 'handlebars');
 
 	// Override with POST having ?_method=PUT or DELETE
-	app.use(methodOverride("_method"));
+	// app.use(methodOverride("_method"));
 
 	// adds a new item to the database
 	app.post("/", function (req, res) {

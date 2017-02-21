@@ -1,6 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
+// var methodOverride = require('method-override');
 var PORT = process.env.PORT || 8080;
 var app = express();
 
@@ -18,8 +18,10 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 // parse an HTML body into a string 
 app.use(bodyParser.text({ type: 'text/html' }));
 
-require("./controllers/apiController.js")(app);
 
+require("./controllers/scraper.js");
+
+require("./controllers/apiController.js")(app);
 
 
 app.listen(PORT);

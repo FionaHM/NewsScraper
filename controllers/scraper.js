@@ -1,6 +1,7 @@
 var request = require('request');
 // Scrapes our HTML
 var cheerio = require('cheerio');
+var Article = require('../models/article.js');
 
 // Make a request call to grab the HTML body from the site of your choice
 request("http://www.huffingtonpost.com/", function(error, response, html) {
@@ -26,15 +27,29 @@ request("http://www.huffingtonpost.com/", function(error, response, html) {
 
 
 //     // Save these results in an object that we'll push into the result array we defined earlier
-    result.push({
-      'link': link,
-      'text': title,
-      'img' : img,
-      'credit': credit
-    });
+    // result.push({
+    //   'link': link,
+    //   'text': title,
+    //   'img' : img,
+    //   'credit': credit
+    // });
+    // save to the Article Model in the database
+    var newArticle = new Article({
+        'title': title,
+        'link': link,
+        'img' : img,
+        'credit': credit,
+    'created_at': new Date(),
+   'updated_at': new Date()
+    }); 
 
+    newArticle.save(function(err){
+        // if (err) throw err;
+        console.log( err );
+
+    })
   });
 
   // Log the result once cheerio analyzes each of its selected elements
-  console.log(result);
+//   console.log(result);
 });
