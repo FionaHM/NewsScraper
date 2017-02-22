@@ -5,19 +5,17 @@ var mongoose = require('../config/connection.js');
 
 var Schema = mongoose.Schema;
 // create a Schema
-var newsSchema = new Schema({
+var commentSchema = new Schema({
     // _id: Number,
-    title: {type : String, required : true, unique : true},
-    link: {type : String, required : true, unique : true},
-    img: String,
-    credit: String,
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment'}],
+    comment: {type : String, required : true, unique : false},
+    article: [{type : Schema.Types.ObjectId, ref: 'Article'}],
+    _creator: {type : Schema.Types.ObjectId, ref: 'User'},  // ref id in user
     created_at: Date,
     updated_at: Date
 });
 
 // create a model using this Schema
-var Article = mongoose.model('Article', newsSchema);
+var Comment = mongoose.model('Comment', commentSchema);
 
 // export the model
-module.exports = Article;
+module.exports = Comment;
