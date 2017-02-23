@@ -1,6 +1,7 @@
 function openAndCloseArticle(id){
     var currentID = '#' + id;
     // click to show 
+    console.log("currentID", currentID);
     if ($(currentID).hasClass("full-article")){
         // show everything
         $(currentID).removeClass("full-article");
@@ -14,12 +15,12 @@ function openAndCloseArticle(id){
 
     // get id of user
     //  var userObj = {username: $('#username').val().trim()}
-    var userid = $('#current-username').attr("data-id");
-    console.log(userid);
-        $('#form'+id).html('New Comment:<input  type="text" name="comment"/>');
-        $('#form'+id).append('<input type="hidden" name="userid" value="' + userid + '">');
-        $('#form'+id).append('<input type="hidden" name="articleid" value="' + id + '">');
-        $('#form'+id).append("<button>Submit</button>");
+    // var userid = $('#current-username').attr("data-id");
+    // console.log(userid);
+        // $('#form'+id).html('New Comment:<input  type="text" name="comment"/>');
+        // $('#form'+id).append('<input type="hidden" name="userid" value="' + userid + '">');
+        // $('#form'+id).append('<input type="hidden" name="articleid" value="' + id + '">');
+        // $('#form'+id).append("<button>Submit</button>");
       
     
 }
@@ -27,15 +28,22 @@ function openAndCloseArticle(id){
 
 function createOrFindUser(){
      var userObj = {username: $('#username').val().trim()}
+     console.log(userObj);
      $.post("/user", userObj, function(data, success){
-           console.log(data);
-           if (success){
-               $('.initial-data').hide();
-               $('#user').append('<div id="current-username" data-id="'+data._id+'"> Welcome ' + data.username + '!></div>');
-               $('.valid-user').show();
-            //    $('.new-user-comment').html("<input type='hidden' name='id' value='" + data._id + "'>");
+        //    console.log("post data", data);
+        //    if (success){
+        //        $('.initial-data').hide();
+        //        $('#user').append('<div id="current-username" data-id="'+data._id+'"> Welcome ' + data.username + '!></div>');
+               
+        //     //    $('.new-user-comment').html("<input type='hidden' name='id' value='" + data._id + "'>");
 
-           }
+        //    }
+     }).done(function(data){
+         $('.valid-user').show();
+         var dataObj = { username: data.username, id: data._id};
+         console.log("dataObj", dataObj);
+         window.location.replace("/"+JSON.stringify(dataObj));
+
      })
 
 }

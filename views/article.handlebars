@@ -1,0 +1,53 @@
+
+<!-- display articles -->
+	<div class="row">
+		<div class="col-xs-12 col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h2 class="text-center">Articles</h2>
+					<ul>
+
+
+						<!-- uses a flag passed from the controller to check if the list is empty -->
+						{{!--{{#if noBurgers }}
+							<p class="text-center">Sorry no burgers to devour!</p>
+						{{/if}}--}}
+					  	{{#each articleObj}}
+						    <li>
+									<p onclick="openAndCloseArticle('{{this.id}}')">CLOSE <span>X</span></p>
+				       				<p><strong>{{this.title}}</strong></p>
+					        		<p><strong>{{this.link}}</strong></p>
+									<p><strong>{{this.created_at}}</strong></p>
+									<div id="{{this.id}}" class="full-article">
+
+										<img src="{{this.img}}" alt="{{this.credit}}">
+										<ul>
+											{{#each this.comments}}
+
+												<li> {{this._id}} |  {{this.comment}} |  {{this._creator.username}} | {{this._creator._id}}</li>
+						
+											{{/each}}
+										</ul>
+									
+										<div>
+										
+												<form  class="new-user-comment" action="/comment" method="POST">
+													New Comment:<input  type="text" name="comment"/>
+													{{#if userObj.id}}
+													<input type="hidden" name="userid" value="{{this.id}}">
+										 			{{/if}}
+													<input type="hidden" name="articleid" value="{{this.id}}">
+													<button>Submit</button>
+												</form>
+										
+										</div>
+									</div>
+
+
+						    </li>
+						{{/each}}
+					</ul>
+				</div>
+			</div>
+		</div>
+		

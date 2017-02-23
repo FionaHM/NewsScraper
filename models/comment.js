@@ -8,7 +8,7 @@ var Schema = mongoose.Schema;
 var commentSchema = new Schema({
     // _id: Number,
     comment: {type : String, required : true, unique : false},
-    article: [{type : Schema.Types.ObjectId, ref: 'Article'}],
+    article: {type : Schema.Types.ObjectId, ref: 'Article'},
     _creator: {type : Schema.Types.ObjectId, ref: 'User'},  // ref id in user
     created_at: Date,
     updated_at: Date

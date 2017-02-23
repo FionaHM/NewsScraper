@@ -5,7 +5,6 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<h2 class="text-center">Articles</h2>
-					<ul>
 						Enter your username to get started adding commments:
 						{{!--<form action="/user" method="POST">--}}
 						<div id="user">
@@ -14,39 +13,7 @@
 						{{!--</form>--}}
 						</div>
 
-						<!-- uses a flag passed from the controller to check if the list is empty -->
-						{{!--{{#if noBurgers }}
-							<p class="text-center">Sorry no burgers to devour!</p>
-						{{/if}}--}}
-					  	{{#each articleObj}}
-						    <li>
-									<p onclick="openAndCloseArticle('{{this.id}}')">CLOSE <span>X</span></p>
-				       				<p><strong>{{this.title}}</strong></p>
-					        		<p><strong>{{this.link}}</strong></p>
-									<p><strong>{{this.created_at}}</strong></p>
-									<div id="{{this.id}}" class="full-article">
-
-										<img src="{{this.img}}" alt="{{this.credit}}">
-										
-										{{#each articleObj}}
-										{{articleObj.comments}}
-										{{!--Username: {{articleObj.comment[0].user}}
-										Comment:  {{articleObj.comment[0].comment}}--}}
-										{{/each}}
-										{{!--only allow add comments for a valid user--}}
-										<div class="valid-user">
-											<form  class="new-user-comment" id="form{{this.id}}" action="/comment" method="POST">
-												{{!--New Comment:<input  type="text" name="comment"/>--}}
-												{{!--<input type="hidden" name="id" value=""/>--}}
-											
-											</form>
-										</div>
-									</div>
-
-
-						    </li>
-						{{/each}}
-					</ul>
+						
 				</div>
 			</div>
 		</div>

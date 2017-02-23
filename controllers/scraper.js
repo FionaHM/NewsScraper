@@ -36,11 +36,7 @@ console.log("running scraper.....");
         'updated_at': new Date()
     }); 
 
-    newArticle.save(function(err){
-        // if (err) throw err;
-        // console.log( err );
-
-    })
+    newArticle.save(function(err){})
   });
 
   // Log the result once cheerio analyzes each of its selected elements
