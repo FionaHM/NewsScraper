@@ -1,6 +1,36 @@
 li:hover {
-    background-color: yellow;
+    background-color: #eceff1 ;
 }
-.full-article, .valid-user {
+.full-article, .valid-user, .show-detail {
     display: none;
+}
+.err-msg {
+    color: red;
+}
+.comments {
+    display: inline;
+    line-height: 1;
+    height: 50px;
+}
+/*for sticky footer*/
+body {
+display: flex;
+min-height: 100vh;
+flex-direction: column;
+}
+
+main {
+flex: 1 0 auto;
+}
+
+i {
+    font-size: 30px;
+    padding: -5px 5px 0px 0px;
+}
+
+@media only screen and (min-width: 993px){
+/*materialize.min.css:6*/
+    .container {
+        width: 80%;
+    }
 }

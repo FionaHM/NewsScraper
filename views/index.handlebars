@@ -1,20 +1,46 @@
-
+<nav>
+<div class="nav-wrapper">
+	<a href="#" class="brand-logo center">News Scraper</a>
+	<ul id="nav-mobile" class="left hide-on-med-and-down">
+	<li><a href="/">Exit</a></li>
+	<li><a href="/">Home</a></li>
+	</ul>
+</div>
+</nav>
 <!-- display articles -->
+<div class="container">
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<h2 class="text-center">Articles</h2>
-						Enter your username to get started adding commments:
-						{{!--<form action="/user" method="POST">--}}
-						<div id="user">
-							User:<input type="text" class="initial-data" id="username" name="username"/>
-							<button class="initial-data" onclick='createOrFindUser()'>Submit</button>
-						{{!--</form>--}}
-						</div>
-
-						
+		<div class="col s8 offset-s2">
+			{{!--<h2 class="text-center">News Scraper</h2>--}}
+			<div class="divider"></div>	
+			<div class="row">	
+				<div class="section">
+					<h4>We selected the best news stories for you so you don't have to spend your valuable time searching the web.</h4>
+					<h6>Just enter your username to get going with the latest news articles. </h6>
+					<h6>Make sure to add your voice to the latest news items via our comments section. </h6>
 				</div>
+			</div> {{!--</div> row--}}
+			<div class="row">
+				<div class="section" id="user">
+					<h5>User Name<input type="text" class="initial-data" id="username" name="username"/></h5>
+					<button class="initial-data" onclick='createOrFindUser()'>Submit</button>
+					{{#if errorObj}}
+						<div class='err-msg'>{{errorObj.msg}}</div>
+					{{/if}}
+				</div>  {{!--</div> id user --}}
+			</div>  {{!--</div> row--}}
+		</div> {{!--</div> col--}}
+	</div> {{!--</div> row--}}
+</div> {{!--</div> container--}}
+{{!--Foooter--}}
+<footer class="page-footer">
+	<div class="container">
+		<div class="footer-copyright">
+			<div class="container center-align valign-wrapper">
+				© 2017 Copyright
 			</div>
 		</div>
+	</div>
+</footer>
+            
 		
