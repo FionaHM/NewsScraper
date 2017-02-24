@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
 // connect to the database
-var connection = mongoose.connect('mongodb://heroku_00mfc8pt:igaafs3qlh1cu1nsrfptgkclqn@ds157549.mlab.com:57549/heroku_00mfc8pt');
+var connection = mongoose.connect(process.env.MONGODB_URI);
 // export the connection
 module.exports = connection;
