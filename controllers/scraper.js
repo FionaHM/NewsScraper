@@ -12,38 +12,6 @@ module.exports = 	function scraper(){
 
       request("http://www.huffingtonpost.com/", function(error, response, html) {
           if (error) reject("Cannot Scrape News Articles.");
-          console.log("in scraper");
-     
-
-          // $("div.card__content").each(function(i, element) {
-          //     // loop thorough the scaped data
-          //     var title = $(element).children('div').eq(0).children('div').eq(1).text();
-          //     var link = $(element).children('a').attr('href');
-          //     var img  = $(element).children('a').eq(0).children('div').find('img').attr('src');
-          //     var credit  = $(element).children('a').eq(0).children('div').text();
-
-          //     // save to the Article Model in the database
-          //     var newArticle = new Article({
-          //         'title': title,
-          //         'link': link,
-          //         'img' : img,
-          //         'credit': credit,
-          //         'created_at': new Date(),
-          //         'updated_at': new Date()
-          //     }); 
-
-
-          //     newArticle.save(function(err, data, raw) {
-          //       // count the number inserted
-          //       if (data) {
-          //         count++;
-          //         console.log(count);
-          //       }        
-          //     })
-                
-          //   });
-
-            // resolve(count);
 
             loopHtml(response, html).then(function(count){
                  console.log("in resolving");
@@ -54,22 +22,15 @@ module.exports = 	function scraper(){
             })
 
           });
-
-          
-
 		}).catch(function(err){
         console.log(err);
         reject(err);
 		})
-
 }
 
 function loopHtml(response, html){
    return new Promise(function(resolve, reject){
-    //  if (error) reject(error);
-      console.log("running scraper.....");
-      var $ = cheerio.load(html);
-       
+      var $ = cheerio.load(html);  
       var count = 0;
       $("div.card__content").each(function(i, element) {
             // loop thorough the scaped data

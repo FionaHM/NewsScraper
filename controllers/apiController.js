@@ -29,6 +29,8 @@ function router(app){
 		})
 	})
 
+	// saves a new comment document to the comments collection in the database
+	// also updates links in other referenced tables Article and User
 	app.post("/comment", function (req, res) {	
 		// capture incoming req data
 		var username =  req.body.username;
@@ -51,7 +53,6 @@ function router(app){
 				, function(err, numberAffected, raw) {
 					console.log("User model numberAffected", numberAffected)
 				})
-		
 				res.redirect('/article/'+username+"/"+id);  // reload the page passing the current user data
 			})
 		}
@@ -59,7 +60,7 @@ function router(app){
 
 	})	
 
-	// this put command updates an item in the database 
+	// this saves the object id of an article to the articles field of a document in the user collection
 	app.post("/article/id", function (req, res) {
 		console.log(req.body);
 		var articleId = req.body.article;
@@ -69,48 +70,39 @@ function router(app){
 		// find user and verify article not already saved 
 		User.findOne({ _id: userid}, function(err, user){
 			if (user.articles.indexOf(articleId) > -1){
-				// dont push
+				// if there already don't push
 				res.json("already saved");
 			} else {
 				User.findOneAndUpdate({ _id: userid},  { $push: {articles: articleId } } ,function(err, user){
 					console.log(user);
 					res.json("saved");
-
 				});
 			}	
-
-
 		});
 
 	})
 
 
-	// this removes saved article from user in the database 
+    // this route removes a referenced article from a user document in the user collection 
 	app.post("/article/id/one", function (req, res) {
-		// console.log(req.body);
 		var articleId = req.body.article;
 		var username = req.body.username;
-		var userid = req.body.userid;
-	
-		// find user and verify article not already saved 
+		var userid = req.body.userid;	
+		// find user and verify if article already saved to user table
 		User.findOne({ _id: userid}, function(err, user){
-			// var userArticleArray = user.articles;
+			// if found then delete from the array using pull command
 			if (user.articles.indexOf(articleId) > -1){
 				User.findOneAndUpdate({ _id: userid}, {$pull :{articles: articleId } },function(err, user){
 					res.json("removed");
 				});
-			
-
 			} else {
-
 				res.json("already removed");
 			}
-			
 		});
-
 	})
 
-	// this put command updates an item in the database 
+	// this put command deletes one comment document from the database collection
+	// already verified on client side that user == creator
 	app.post("/comment/one", function (req, res) {
 		var commentId = req.body.commentId;
 		var creatorId = req.body.creatorId;
@@ -118,8 +110,8 @@ function router(app){
 		var userid = req.body.userid;
 		// find comment and remove it
 		Comment.findOneAndRemove({ _id: commentId }, function(err, comment){
-			// push remove to other linked collections
-			// push to Article
+				// push remove to other linked collections
+				// push to Article
 				Article.update({ _id: comment.article},
 				{ $push: {comments: commentId } }	
 				, function(err, numberAffected, raw) {
@@ -139,10 +131,10 @@ function router(app){
 			res.json(userObj);  // reload the page passing the current user data
 	})
 
+	// this route gets all articles from the scraped website, saves new ones and updates the page
 	app.get('/article/:username/:id', function(req, res){
 		// pull in latest articles when user gets
 		if (req.params.username){
-		
 			// parse the object passed as a string in the req param
 			var username = req.params.username;
 			var id = req.params.id;
@@ -150,7 +142,6 @@ function router(app){
 			// verify that both username and id were captured
 			if ((username) && (id)){
 				// scrapes and saves documents
-				
 				scraper().then(function(count){
 					var newArticles = count;
 					Article.find({}, function(err, doc){}).sort({created_at: -1})
@@ -181,26 +172,22 @@ function router(app){
 		}
 	})
 
-
+	// This route gets the users stored articles along with all the associated comments
 	app.get('/article/user/:username/:id', function(req, res){
-		// pull in latest articles when user gets
 		if (req.params.username){
 			// parse the object passed as a string in the req param
 			var username = req.params.username;
 			var id = req.params.id;
 			var jsonDataObj = { username: username, id: id};
-			// verify that both username and id were captured
+			// verify that both username and id were captured before proceeding.
 			if ((username) && (id)){	
-				// find saved articles
+				// find user saved articles - most recent first
 				User.find({_id: id}, function(err, user){}).sort({created_at: -1})
-					// .populate('articles')
-					// .deepPopulate('articles.comments')
 					.exec(function(error, user){			
-						// get all articles
+						// get all user saved articles in the results array by querying the articles model
 						Article.find({ _id: { $in: user[0].articles } }, function(error, article){
 
 						}).populate('comments')
-						// .populate('users')
 						.deepPopulate('comments._creator')   //to get the username from _creator field
 						// .limit(20)s
 						.exec(function(error, articles){
