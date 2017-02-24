@@ -103,4 +103,4 @@ Stores user comments.
 
 
 #  License
-FriendFinder is released under the MIT license.
+Released under the MIT license.
