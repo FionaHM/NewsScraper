@@ -12,7 +12,7 @@ function openAndCloseArticle(id){
         $('#form'+id).append('<input type="hidden" name="userid" value="' + userid + '">');
         $('#form'+id).append('<input type="hidden" name="articleid" value="' + id + '">');
         $('#form'+id).append('<input type="hidden" name="username" value="' + username + '">');
-        $('#form'+id).append("<button>Submit</button>");
+        $('#form'+id).append('<button class="waves-effect waves-light btn">Submit</button>');
     } else {
         $("#" + id).addClass("full-article");
     }       
@@ -36,7 +36,7 @@ function verifyOwner(creatorId, commentId, articleId){
         })
      } else {
          // send error message if user tries to delete another users comment
-         $('#err-'+ articleId).append("<div class='err-msg'>You can only delete your own comments!</div>")
+         $('#err-'+ articleId).html("<div class='err-msg'>You can only delete your own comments!</div>")
      }
 
 }
@@ -57,11 +57,24 @@ function createOrFindUser(){
 }
 
 function showDetails(id){
-
     if ($("#"+id).hasClass("show-detail")){
         $("#"+id).removeClass("show-detail");
     } else {
         $("#"+id).addClass("show-detail");
     }
+
+}
+
+function saveArticle(articleId){
+    var currentuserid = $('#current-user-id').attr("data-id");
+    var currentusername = $('#current-user-id').attr("data-username");
+
+    var articleObj = { userid: currentuserid, username: currentusername, article: articleId};
+         $.post("/article/id", articleObj, function(data, success){
+// to do!!!
+         }).done(function(data){
+            //  change button to show saved?
+             window.location.replace("/"+currentusername+"/"+currentuserid);
+        })
 
 }

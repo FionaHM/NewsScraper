@@ -9,6 +9,7 @@ var userSchema = new Schema({
     // _id: Number,
     username: {type : String, required : true, unique : true},
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment'}],
+    favorite: [{ type: Schema.Types.ObjectId, ref: 'Article'}],
     created_at: Date,
     updated_at: Date
 });

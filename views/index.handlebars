@@ -2,8 +2,8 @@
 <div class="nav-wrapper">
 	<a href="#" class="brand-logo center">News Scraper</a>
 	<ul id="nav-mobile" class="left hide-on-med-and-down">
-	<li><a href="/">Exit</a></li>
-	<li><a href="/">Home</a></li>
+ 		<li><a href="/">Home</a></li>
+ 		<li><a href="/">Favourites</a></li>
 	</ul>
 </div>
 </nav>
@@ -23,7 +23,7 @@
 			<div class="row">
 				<div class="section" id="user">
 					<h5>User Name<input type="text" class="initial-data" id="username" name="username"/></h5>
-					<button class="initial-data" onclick='createOrFindUser()'>Submit</button>
+					<button  class="waves-effect waves-light btn initial-data" onclick='createOrFindUser()'>Submit</button>
 					{{#if errorObj}}
 						<div class='err-msg'>{{errorObj.msg}}</div>
 					{{/if}}

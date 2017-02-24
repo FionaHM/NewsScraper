@@ -12,6 +12,19 @@ li:hover {
     line-height: 1;
     height: 50px;
 }
+.card-image {
+    height: 200px;
+}
+/*.news-img {
+    height: 200px;
+    width: 200px;
+}*/
+.news-card {
+    width: 80%;
+}
+.card {
+    width: 50%;
+}
 /*for sticky footer*/
 body {
 display: flex;
