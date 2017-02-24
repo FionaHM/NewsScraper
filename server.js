@@ -22,7 +22,7 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.use(bodyParser.text({ type: 'text/html' }));
 
 // populate database initially - dont erase existing data
-require("./controllers/scraper.js");
+// require("./controllers/scraper.js");
 
 require("./controllers/apiController.js")(app);
 

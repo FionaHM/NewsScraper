@@ -14,9 +14,12 @@ var newsSchema = new Schema({
     img: String,
     credit: String,
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment'}],
+    // users: [{ type: Schema.Types.ObjectId, ref: 'User'},{unique : true}],
     created_at: Date,
     updated_at: Date
 });
+
+// newsSchema.index({following: 1}, {unique: true, dropDups: true});
 
 
 newsSchema.plugin(deepPopulate, {

@@ -6,11 +6,19 @@ li:hover {
 }
 .err-msg {
     color: red;
+    margin: 10px;
 }
 .comments {
     display: inline;
     line-height: 1;
     height: 50px;
+    margin: 5px;
+}
+.comment-rows {
+    margin: 10px;
+}
+.comment-entry {
+    margin-top: 30px;
 }
 .card-image {
     height: 200px;
@@ -21,6 +29,12 @@ li:hover {
 }*/
 .news-card {
     width: 80%;
+}
+.save-btn {
+    margin: 10px;
+}
+.unsave-btn {
+    margin: 10px;
 }
 .card {
     width: 50%;

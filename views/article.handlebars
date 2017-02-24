@@ -3,7 +3,7 @@
       <a href="#" class="brand-logo center">News Scraper</a>
       <ul id="nav-mobile" class="left hide-on-med-and-down">
         <li><a href="/">Home</a></li>
- 		<li><a href="/">Favourites</a></li>
+ 		<li><a href="/">Favourite Articles</a></li>
       </ul>
     </div>
   </nav>
@@ -11,80 +11,98 @@
 <div class="container">
 	{{!--<div class="row">--}}
 	<div class="valign-wrapper row">
-		<div class="col s12">
-			<div><h5 class="center-align" id="current-user-id" data-id="{{userObj.id}}" data-username="{{userObj.username}}"><strong>Welcome {{userObj.username}}!</strong></h5></div>
-			<div><p class="center-align">Here are the top 20 news stories of the day specially selected for your enlightenment. Enjoy!</p></div>
-			<div><p class="center-align">Just select the "Comment" icon to view and add comments.</p></div>
-
+			<div class="col s12">
+				<div><h5 class="center-align" id="current-user-id" data-id="{{userObj.id}}" data-username="{{userObj.username}}"><strong>Welcome {{userObj.username}}!</strong></h5></div>
+				<div><p class="center-align">Here are the top news stories of the day specially selected for your enlightenment. The most recent stories are dislayed first. Enjoy!</p></div>
+				<div><p class="center-align">Just select the "Comment" icon to view and add comments.</p></div>
+			</div>
+	</div>
+	<div class="valign-wrapper row">
+			<div class="col s4"></div>
+			<div class="col s4">
+				<div class="center-align">
+					<form action="/article/{{userObj.username}}/{{userObj.id}}" method="GET">
+						<button class="waves-effect waves-light btn" onclick="">Fetch New Articles</button>
+					</form>
+					{{!--{{#if newArticles}}--}}
+					New Articles
+			 			 {{newArticles}}
+					{{!--{{/if}}--}}
+					</div>
+			</div>
+			<div class="col s4"></div>
 		</div>
 	</div>
 	<div class="divider"></div>
 
 	<ul>
 		{{#each articleObj}}
+		 <div class="section">
 		 <div class="row">
 			<div class="row">
-				<div class="col s2">
-					{{!--must create jquery function***********--}}
-					<button class="btn" onclick="saveArticle('{{this.id}}')">Save</button>	
+				<div class="col s12 m12 l2 center-align">
+					<div class="center-align row">
+
+						<button id="saved-{{this.id}}" class="btn save-btn" onclick="saveArticle('{{this.id}}')">SAVE</button>	
+						<button id="unsave-{{this.id}}" class="btn unsave-btn hide" onclick="removeArticle('{{this.id}}')">REMOVE</button>
+						<div id="saved-msg-{{this.id}}"></div>
+					</div>
 				</div>
-				<div class="col s4">
+				<div class="col s12 m12 l4 center-align">
 					<div class="row">
 						<div class="col s12"><img class="news-img" src="{{this.img}}" alt="{{this.credit}}"></div>
 					</div>
 					<div class="row">
 						<div class="row">
-							<div onclick="openAndCloseArticle('{{this.id}}')"><i class="material-icons">view_list</i><p class="comments">Comments</p></div>
+							<div class="col s12"><a href="{{this.link}}" target="_blank">Link to Article</a></div>
 						</div>
 					</div>
 				</div>
-				<div class="col s6">
+				<div class="col s12 m12 l6 center-align">
 					<div class="row">
 						<div class="col s12" ><h4><strong>{{this.title}}</strong></h4></div>
 						<div class="col s12"><p><strong>Content Updated:</strong> {{this.created_at}}</p></div>
-						<div class="col s12"><a href="{{this.link}}" target="_blank">Link to Article</a></div>
+
+						<div onclick="openAndCloseArticle('{{this.id}}')"><i class="material-icons">view_list</i><p class="comments">View / Add Comments</p></div>
 						
 					</div>
 				</div>
 
 			</div>
-			{{!--<div id="id-{{this._id}}" class="show-detail">--}}
-
-
-				{{!comment section----}}
-				<div class="row">
-					<div class="col s2">
-					</div>
-					<div class="col s10">
-						{{!--<div class="row">
-							<div onclick="openAndCloseArticle('{{this.id}}')"><i class="material-icons">view_list</i><p class="comments">Comments</p></div>
-						</div>--}}
-							<div id="{{this.id}}" class="full-article">
-								<div id="err-{{this.id}}"></div>
-								<ul>
-									{{#each this.comments}}
-							
-										<div class="row">
-											<div class="col s2"><strong>{{this._creator.username}}</strong> </div>
-											<div class="col s6"> {{this.comment}} </div>
-											{{!--user can only delete users own comments--}}
-											<div class="col s4"><button class="waves-effect waves-light btn" onclick="verifyOwner('{{this._creator._id}}', '{{this._id}}','{{this.article}}')">Delete Comment</button></div>
-										</div>
-									{{/each}}
-								</ul>
-								<div id="err-{{this.id}}"></div>
-								<div>
-									<form  class="new-user-comment" id="form{{this.id}}" action="/comment" method="POST">
-									{{!--User input html will be painted here--}}
-									</form>
+	
+			{{!comment section----}}
+			<div class="row">
+				<div class="col s2">
+				</div>
+				<div class="col s10">
+					<div id="{{this.id}}" class="full-article">
+						<div id="err-{{this.id}}"></div>
+						<ul>
+							{{#each this.comments}}
+								<div class="row">
+									<div class="col s2"><strong>{{this._creator.username}}</strong> </div>
+									<div class="col s6"> {{this.comment}} </div>
+									{{!--user can only delete users own comments--}}
+									<div class="col s4"><button class="waves-effect waves-light btn" onclick="verifyOwner('{{this._creator._id}}', '{{this._id}}','{{this.article}}')">Delete Comment</button></div>
 								</div>
+								<div class="comment-rows divider"></div>
+							{{/each}}
+						</ul>
+						<div id="err-{{this.id}}"></div>
+						<div>
+							<div class="comment-entry">
+								<form  class="new-user-comment" id="form{{this.id}}" action="/comment" method="POST">
+								{{!--User input html will be painted here--}}
+								</form>
 							</div>
 						</div>
 					</div>
+				</div>
+				</div>
 					<div class="divider"></div>
 				</div>
 			
-		  {{!--</div>--}}
+		  </div> {{!--</div> end of section--}}
 		  
 		{{/each}}
 	</ul>

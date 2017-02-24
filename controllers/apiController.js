@@ -2,6 +2,7 @@ var exprhbs = require('express-handlebars');
 var Article = require('../models/article.js');
 var Comment = require('../models/comment.js');
 var User = require('../models/user.js');
+var scraper = require("./scraper.js");
 // var methodOverride = require("method-override");
 
 // I pass the app in as a parameter - this means i dont need to require express above
@@ -55,10 +56,83 @@ function router(app){
 				console.log("User model numberAffected", numberAffected)
 			})
 	
-			res.redirect('/'+username+"/"+id);  // reload the page passing the current user data
+			res.redirect('/article/'+username+"/"+id);  // reload the page passing the current user data
 		})
 
 	})	
+
+	// this put command updates an item in the database 
+	app.post("/article/id", function (req, res) {
+		console.log(req.body);
+		var articleId = req.body.article;
+		var username = req.body.username;
+		var userid = req.body.userid;
+	
+		// find user and verify article not already saved 
+		User.findOne({ _id: userid}, function(err, user){
+			// var userArticleArray = user.articles;
+			if (user.articles.indexOf(articleId) > -1){
+				// dont push
+				console.log("alrdayd saveds");
+				res.json("already saved");
+			} else {
+				User.findOneAndUpdate({ _id: userid},  { $push: {articles: articleId } } ,function(err, user){
+					console.log(user);
+					res.json("saved");
+
+				});
+			}
+			
+		     // push to articles
+			// Article.update({ _id: articleId},
+			// { $push: {users: userid } }	
+			// , function(err, numberAffected, raw) {
+			// 	console.log("User model numberAffected", numberAffected)
+			// })
+
+
+		});
+
+	})
+
+
+	// this removes saved article from user in the database 
+	app.post("/article/id/one", function (req, res) {
+		// console.log(req.body);
+		var articleId = req.body.article;
+		var username = req.body.username;
+		var userid = req.body.userid;
+	
+		// find user and verify article not already saved 
+		User.findOne({ _id: userid}, function(err, user){
+			// var userArticleArray = user.articles;
+			if (user.articles.indexOf(articleId) > -1){
+				User.findOneAndUpdate({ _id: userid}, {$pull :{articles: articleId } },function(err, user){
+					console.log(user);
+					res.json("removed");
+				});
+			
+
+			} else {
+				console.log(user.articles);
+				console.log("alrdayd removed");
+				res.json("already removed");
+			}
+			
+		     // push to articles
+			// Article.update({ _id: articleId},
+			// { $push: {users: userid } }	
+			// , function(err, numberAffected, raw) {
+			// 	console.log("User model numberAffected", numberAffected)
+			// })
+
+
+		});
+
+	})
+
+
+	
 
 	// this put command updates an item in the database 
 	app.post("/comment/one", function (req, res) {
@@ -89,27 +163,39 @@ function router(app){
 			res.json(userObj);  // reload the page passing the current user data
 	})
 
-	app.get('/:username/:id', function(req, res){
+	app.get('/article/:username/:id', function(req, res){
 		// pull in latest articles when user gets
+		// console.log("in here");
 		if (req.params.username){
+		
 			// parse the object passed as a string in the req param
 			var username = req.params.username;
 			var id = req.params.id;
 			var jsonDataObj = { username: username, id: id};
 			// verify that both username and id were captured
 			if ((username) && (id)){
-				require("./scraper.js");
-				// find all the articles and load them on the main page 
-				// put most recent articles first -- sort created_at -1
-				Article.find({}, function(err, doc){}).sort({created_at: -1})
-				.populate('comments')
-				.deepPopulate('comments._creator')   //to get the username from _creator field
-				.limit(20)
-				.exec(function(error, articles){
-					// send the data back for display
-					var outputObj = {"articleObj": articles, "userObj": jsonDataObj};
-					res.render("article", outputObj);
-				});
+				// scrapes and saves documents
+				
+				scraper().then(function(count){
+					var newArticles = count;
+					Article.find({}, function(err, doc){}).sort({created_at: -1})
+						.populate('comments')
+						// .populate('users')
+						.deepPopulate('comments._creator')   //to get the username from _creator field
+						// .limit(20)s
+						.exec(function(error, articles){
+
+							// console.log(articles);
+							// send the data back for display
+							var outputObj = {"articleObj": articles, "userObj": jsonDataObj,"newArticles" : newArticles};
+							console.log("in here");
+							res.render("article", outputObj);
+					});
+
+				}).catch(function(err){
+					console.log(err);
+				})
+
 			} else {
 				// maybe pass error message object for display
 				var errorMsg = {msg: "Something went wrong - please try again."};
@@ -122,6 +208,9 @@ function router(app){
 			res.render("index", { errorObj: errorMsg});
 		}
 	})
+
+
+
 
 	app.use(function(req, res){
 		res.render("index", {});

@@ -32,7 +32,7 @@ function verifyOwner(creatorId, commentId, articleId){
             // var dataObj = {username: data.username, id: data.id};
             // // redirects to main page - passing the username and id as parameters for use later
             // window.location.replace("/"+JSON.stringify(dataObj));
-             window.location.replace("/"+data.username+"/"+data.id);
+             window.location.replace("/article/"+data.username+"/"+data.id);
         })
      } else {
          // send error message if user tries to delete another users comment
@@ -50,7 +50,7 @@ function createOrFindUser(){
      }).done(function(data){
         //  var dataObj = {username: data.username, id: data._id};
          // redirects to main page - passing the username and id as parameters for use later
-         window.location.replace("/"+data.username+"/"+data._id);
+         window.location.replace("/article/"+data.username+"/"+data._id);
 
      })
 
@@ -70,11 +70,53 @@ function saveArticle(articleId){
     var currentusername = $('#current-user-id').attr("data-username");
 
     var articleObj = { userid: currentuserid, username: currentusername, article: articleId};
-         $.post("/article/id", articleObj, function(data, success){
+         $.post("/article/id/", articleObj, function(data, success){
 // to do!!!
+
          }).done(function(data){
             //  change button to show saved?
-             window.location.replace("/"+currentusername+"/"+currentuserid);
+            console.log(data);
+            if (data === "saved"){
+                $("#saved-msg-"+articleId).html("Article Saved....");
+                $("#saved-"+articleId).addClass("hide");
+                $("#unsave-"+articleId).removeClass("hide");
+
+
+            } else {
+                $("#saved-msg-"+articleId).html("Article Already Saved");
+                $("#saved-"+articleId).addClass("hide");
+                 $("#unsave-"+articleId).removeClass("hide");
+
+            }
+            //  window.location.replace("/article/"+currentusername+"/"+currentuserid);
+        })
+
+}
+
+
+function removeArticle(articleId){
+    var currentuserid = $('#current-user-id').attr("data-id");
+    var currentusername = $('#current-user-id').attr("data-username");
+
+    var articleObj = { userid: currentuserid, username: currentusername, article: articleId};
+         $.post("/article/id/one", articleObj, function(data, success){
+
+
+         }).done(function(data){
+            //  change button to show saved?
+            console.log(data);
+             if (data === "removed"){
+                $("#saved-msg-"+articleId).html("Article Removed....");
+                $("#saved-"+articleId).removeClass("hide");
+                $("#unsave-"+articleId).addClass("hide");
+
+            } else {
+                $("#saved-msg-"+articleId).html("Article Already Saved");
+                $("#saved-"+articleId).removeClass("hide");
+                 $("#unsave-"+articleId).addClass("hide");
+
+            }
+            //  window.location.replace("/article/"+currentusername+"/"+currentuserid);
         })
 
 }
