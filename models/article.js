@@ -27,6 +27,7 @@ newsSchema.plugin(deepPopulate, {
     'comments._creator'
   ]
 });
+
 // create a model using this Schema
 var Article = mongoose.model('Article', newsSchema);
 

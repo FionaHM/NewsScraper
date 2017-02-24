@@ -2,6 +2,7 @@
 // // connect to the database
 // mongoose.connect('mongodb://localhost:27017/newsscraperdb');
 var mongoose = require('../config/connection.js');
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 var Schema = mongoose.Schema;
 // create a Schema
@@ -15,6 +16,12 @@ var userSchema = new Schema({
     updated_at: Date
 });
 
+
+// userSchema.plugin(deepPopulate, {
+//   whitelist: [
+//     'articles.comments'
+//   ]
+// });
 // create a model using this Schema
 var User = mongoose.model('User', userSchema);
 

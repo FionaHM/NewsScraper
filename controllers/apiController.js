@@ -11,10 +11,6 @@ function router(app){
 	app.engine('handlebars', exprhbs({defaultLayout: 'main'}));
 	// this sets the view engine to handlebars
 	app.set('view engine', 'handlebars');
-
-	// Override with POST having ?_method=PUT or DELETE
-	// app.use(methodOverride("_method"));
-
 	// check if new or existing user
 	app.post("/user", function (req, res) {
 		// save to database
@@ -31,33 +27,35 @@ function router(app){
 				res.json(user);
 			}	
 		})
-		// .populate('comments'); //populate comments not really needed here
 	})
 
 	app.post("/comment", function (req, res) {	
 		// capture incoming req data
 		var username =  req.body.username;
 		var id = req.body.userid;	
-		var newComment = new Comment({comment: req.body.comment,
+		if (req.body.comment !== ""){
+			var newComment = new Comment({comment: req.body.comment,
 			article: req.body.articleid,
 			_creator: req.body.userid});
-		//save coment to newsscraperdb
-		newComment.save({}, function(err, newcomment) {
-			// push to article
-			Article.update({ _id: req.body.articleid},
-			{ $push: {comments: newcomment._id } }	
-			, function(err, numberAffected, raw) {
-				console.log("Article Model numberAffected", numberAffected)
+			//save coment to newsscraperdb
+			newComment.save({}, function(err, newcomment) {
+				// push to article
+				Article.update({ _id: req.body.articleid},
+				{ $push: {comments: newcomment._id } }	
+				, function(err, numberAffected, raw) {
+					console.log("Article Model numberAffected", numberAffected)
+				})
+				// push to user
+				User.update({ _id: req.body.userid},
+				{ $push: {comments: newcomment._id } }	
+				, function(err, numberAffected, raw) {
+					console.log("User model numberAffected", numberAffected)
+				})
+		
+				res.redirect('/article/'+username+"/"+id);  // reload the page passing the current user data
 			})
-			// push to user
-			User.update({ _id: req.body.userid},
-			{ $push: {comments: newcomment._id } }	
-			, function(err, numberAffected, raw) {
-				console.log("User model numberAffected", numberAffected)
-			})
-	
-			res.redirect('/article/'+username+"/"+id);  // reload the page passing the current user data
-		})
+		}
+		
 
 	})	
 
@@ -70,10 +68,8 @@ function router(app){
 	
 		// find user and verify article not already saved 
 		User.findOne({ _id: userid}, function(err, user){
-			// var userArticleArray = user.articles;
 			if (user.articles.indexOf(articleId) > -1){
 				// dont push
-				console.log("alrdayd saveds");
 				res.json("already saved");
 			} else {
 				User.findOneAndUpdate({ _id: userid},  { $push: {articles: articleId } } ,function(err, user){
@@ -81,14 +77,7 @@ function router(app){
 					res.json("saved");
 
 				});
-			}
-			
-		     // push to articles
-			// Article.update({ _id: articleId},
-			// { $push: {users: userid } }	
-			// , function(err, numberAffected, raw) {
-			// 	console.log("User model numberAffected", numberAffected)
-			// })
+			}	
 
 
 		});
@@ -108,31 +97,18 @@ function router(app){
 			// var userArticleArray = user.articles;
 			if (user.articles.indexOf(articleId) > -1){
 				User.findOneAndUpdate({ _id: userid}, {$pull :{articles: articleId } },function(err, user){
-					console.log(user);
 					res.json("removed");
 				});
 			
 
 			} else {
-				console.log(user.articles);
-				console.log("alrdayd removed");
+
 				res.json("already removed");
 			}
 			
-		     // push to articles
-			// Article.update({ _id: articleId},
-			// { $push: {users: userid } }	
-			// , function(err, numberAffected, raw) {
-			// 	console.log("User model numberAffected", numberAffected)
-			// })
-
-
 		});
 
 	})
-
-
-	
 
 	// this put command updates an item in the database 
 	app.post("/comment/one", function (req, res) {
@@ -165,7 +141,6 @@ function router(app){
 
 	app.get('/article/:username/:id', function(req, res){
 		// pull in latest articles when user gets
-		// console.log("in here");
 		if (req.params.username){
 		
 			// parse the object passed as a string in the req param
@@ -184,11 +159,8 @@ function router(app){
 						.deepPopulate('comments._creator')   //to get the username from _creator field
 						// .limit(20)s
 						.exec(function(error, articles){
-
-							// console.log(articles);
 							// send the data back for display
 							var outputObj = {"articleObj": articles, "userObj": jsonDataObj,"newArticles" : newArticles};
-							console.log("in here");
 							res.render("article", outputObj);
 					});
 
@@ -209,6 +181,50 @@ function router(app){
 		}
 	})
 
+
+	app.get('/article/user/:username/:id', function(req, res){
+		// pull in latest articles when user gets
+		if (req.params.username){
+			// parse the object passed as a string in the req param
+			var username = req.params.username;
+			var id = req.params.id;
+			var jsonDataObj = { username: username, id: id};
+			// verify that both username and id were captured
+			if ((username) && (id)){	
+				// find saved articles
+				User.find({_id: id}, function(err, user){}).sort({created_at: -1})
+					// .populate('articles')
+					// .deepPopulate('articles.comments')
+					.exec(function(error, user){			
+						// get all articles
+						Article.find({ _id: { $in: user[0].articles } }, function(error, article){
+
+						}).populate('comments')
+						// .populate('users')
+						.deepPopulate('comments._creator')   //to get the username from _creator field
+						// .limit(20)s
+						.exec(function(error, articles){
+							var outputObj = {"articleObj": articles, "userObj": jsonDataObj};
+							res.render("favourite", outputObj);
+					});
+
+						
+				}).catch(function(err){
+					console.log(err);
+				})
+
+			} else {
+				// maybe pass error message object for display
+				var errorMsg = {msg: "Something went wrong - please try again."};
+				res.render("index", { errorObj: errorMsg});
+			}
+
+		} else {
+			// maybe pass error message object for display
+			var errorMsg = "Something went wrong - please try again.";
+			res.render("index", { errorObj: errorMsg});
+		}
+	})
 
 
 

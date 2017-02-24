@@ -2,6 +2,7 @@
 // // connect to the database
 // mongoose.connect('mongodb://localhost:27017/newsscraperdb');
 var mongoose = require('../config/connection.js');
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 var Schema = mongoose.Schema;
 // create a Schema
