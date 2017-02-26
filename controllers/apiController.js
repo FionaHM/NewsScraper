@@ -113,13 +113,13 @@ function router(app){
 				// push remove to other linked collections
 				// push to Article
 				Article.update({ _id: comment.article},
-				{ $push: {comments: commentId } }	
+				{ $pull: {comments: commentId } }	
 				, function(err, numberAffected, raw) {
 					console.log("Article Model numberAffected", numberAffected)
 				})
 				// push to user
 				User.update({ _id: comment._creator},
-				{ $push: {comments: commentId } }	
+				{ $pull: {comments: commentId } }	
 				, function(err, numberAffected, raw) {
 					console.log("User model numberAffected", numberAffected)
 
