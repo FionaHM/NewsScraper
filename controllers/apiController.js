@@ -101,6 +101,23 @@ function router(app){
 		});
 	})
 
+
+    // this route removes a referenced article from a user document in the user collection 
+	app.post("/article/id/favorite", function (req, res) {
+		var articleId = req.body.article;
+		var username = req.body.username;
+		var userid = req.body.userid;	
+		// find user and verify if article already saved to user table
+		User.findOne({ _id: userid}, function(err, user){
+			// if found then delete from the array using pull command
+			if (user.articles.indexOf(articleId) > -1){
+				User.findOneAndUpdate({ _id: userid}, {$pull :{articles: articleId } },function(err, user){
+					// console.log("/userarticle/"+username+"/"+userid);
+					res.json({username: username, userid: userid});
+				});
+			} 
+		});
+	})
 	// this put command deletes one comment document from the database collection
 	// already verified on client side that user == creator
 	app.post("/comment/one", function (req, res) {
@@ -173,7 +190,7 @@ function router(app){
 	})
 
 	// This route gets the users stored articles along with all the associated comments
-	app.get('/article/user/:username/:id', function(req, res){
+	app.get('/userarticle/:username/:id', function(req, res){
 		if (req.params.username){
 			// parse the object passed as a string in the req param
 			var username = req.params.username;

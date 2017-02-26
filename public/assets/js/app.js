@@ -18,6 +18,26 @@ function openAndCloseArticle(id){
     }       
 }
 
+function openAndCloseArticle2(id){
+    // function to show details of article including comments
+    var currentID = '#' + id;
+    if ($(currentID).hasClass("full-article")){
+        // show everything
+        $(currentID).removeClass("full-article");
+        // get id of user from the DOM
+        var userid = $('#current-user-id').attr("data-id");
+        var username = $('#current-user-id').attr("data-username");
+        // dynamically paint the DOM passing in user information that will be required later
+        $('#form'+id).html('New Comment:<input  type="text" name="comment"/>');
+        $('#form'+id).append('<input type="hidden" name="userid" value="' + userid + '">');
+        $('#form'+id).append('<input type="hidden" name="articleid" value="' + id + '">');
+        $('#form'+id).append('<input type="hidden" name="username" value="' + username + '">');
+        $('#form'+id).append('<button class="waves-effect waves-light btn">Submit</button>');
+    } else {
+        $("#" + id).addClass("full-article");
+    }       
+}
+
 function verifyOwner(creatorId, commentId, articleId){
      var currentuserid = $('#current-user-id').attr("data-id");
      var currentusername = $('#current-user-id').attr("data-username");
@@ -107,6 +127,21 @@ function removeArticle(articleId){
 
             }
             //  window.location.replace("/article/"+currentusername+"/"+currentuserid);
+        })
+
+}
+
+function removeFavArticle(articleId){
+    var currentuserid = $('#current-user-id').attr("data-id");
+    var currentusername = $('#current-user-id').attr("data-username");
+    var articleObj = { userid: currentuserid, username: currentusername, article: articleId};
+         $.post("/article/id/favorite", articleObj, function(data, success){
+
+         }).done(function(data){
+
+            //  change button to show saved?
+            //  window.location.replace("/article/"+currentusername+"/"+currentuserid);
+             window.location.replace("/userarticle/"+data.username+"/"+data.userid);
         })
 
 }
